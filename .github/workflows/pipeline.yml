@@ -2,69 +2,66 @@ name: Enterprise CI/CD Pipeline
 
 
 on:
-
   push:
-
     branches:
       - develop
       - staging
       - main
 
+  pull_request:
+    branches:
+      - main
 
 
 jobs:
 
-
   build-and-test:
+
+    name: Build and Test Application
 
     runs-on: ubuntu-latest
 
 
     environment:
-
-      name: ${{ 
-        github.ref_name == 'develop' && 'Development' ||
-        github.ref_name == 'staging' && 'Staging' ||
-        'Production'
-      }}
+      name: ${{ github.ref_name == 'develop' && 'Development' || github.ref_name == 'staging' && 'Staging' || 'Production' }}
 
 
     steps:
 
 
-    - name: Checkout Code
-
-      uses: actions/checkout@v4
-
-
-
-    - name: Setup Node.js
-
-      uses: actions/setup-node@v4
-
-      with:
-
-        node-version: 20
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
 
 
 
-    - name: Install Dependencies
-
-      working-directory: ./app
-
-      run: npm install
-
-
-
-    - name: Build Docker Image
-
-      run: docker build -t enterprise-app ./app
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
 
 
-    - name: Display Environment
+      - name: Install Dependencies
+        working-directory: ./app
+        run: npm install
 
-      run: |
 
-        echo "Environment:"
-        echo ${{ vars.APP_ENV }}
+
+      - name: Run Application Test
+        working-directory: ./app
+        run: |
+          npm start &
+          sleep 5
+          curl http://localhost:3000/health
+
+
+
+      - name: Build Docker Image
+        run: docker build -t enterprise-app ./app
+
+
+
+      - name: Display Environment
+        run: |
+          echo "Current Environment:"
+          echo "${{ vars.APP_ENV }}"
