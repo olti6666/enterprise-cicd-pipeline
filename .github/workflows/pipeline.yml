@@ -1,0 +1,176 @@
+name: Enterprise CI/CD Pipeline
+
+
+on:
+
+  push:
+
+    branches:
+      - develop
+      - staging
+      - main
+
+
+
+jobs:
+
+
+  build-and-test:
+
+
+    name: Build and Test Application
+
+    runs-on: ubuntu-latest
+
+
+    steps:
+
+
+      - name: Checkout Code
+
+        uses: actions/checkout@v4
+
+
+
+      - name: Setup Node.js
+
+        uses: actions/setup-node@v4
+
+        with:
+          node-version: 20
+
+
+
+      - name: Install Dependencies
+
+        working-directory: ./app
+
+        run: npm install
+
+
+
+      - name: Run Health Test
+
+        working-directory: ./app
+
+        run: |
+
+          npm start &
+
+          sleep 5
+
+          curl http://localhost:3000/health
+
+
+
+      - name: Build Docker Image
+
+        run: docker build -t enterprise-app ./app
+
+
+
+# ============================
+# DEVELOPMENT DEPLOY
+# ============================
+
+
+  deploy-development:
+
+
+    name: Deploy Development
+
+    needs: build-and-test
+
+    if: github.ref == 'refs/heads/develop'
+
+
+    runs-on: ubuntu-latest
+
+
+    environment:
+
+      name: Development
+
+
+    steps:
+
+
+      - name: Deploy DEV
+
+        run: |
+
+          echo "Deploying to DEVELOPMENT"
+
+          echo "Environment: ${{ vars.APP_ENV }}"
+
+
+
+# ============================
+# STAGING DEPLOY
+# ============================
+
+
+  deploy-staging:
+
+
+    name: Deploy Staging
+
+    needs: build-and-test
+
+    if: github.ref == 'refs/heads/staging'
+
+
+    runs-on: ubuntu-latest
+
+
+    environment:
+
+      name: Staging
+
+
+    steps:
+
+
+      - name: Deploy STAGING
+
+        run: |
+
+          echo "Deploying to STAGING"
+
+          echo "Environment: ${{ vars.APP_ENV }}"
+
+
+
+# ============================
+# PRODUCTION DEPLOY
+# ============================
+
+
+  deploy-production:
+
+
+    name: Deploy Production
+
+    needs: build-and-test
+
+    if: github.ref == 'refs/heads/main'
+
+
+    runs-on: ubuntu-latest
+
+
+    environment:
+
+      name: Production
+
+
+    steps:
+
+
+      - name: Deploy PRODUCTION
+
+        run: |
+
+          echo "Deploying to PRODUCTION"
+
+          echo "Environment: ${{ vars.APP_ENV }}"
