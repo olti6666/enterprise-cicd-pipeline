@@ -1,29 +1,12 @@
 {
-<<<<<<< HEAD
-  "name": "app",
-  "version": "1.0.0",
-  "description": "",
-=======
   "name": "enterprise-app",
   "version": "1.0.0",
   "description": "Enterprise CI/CD Demo Application",
->>>>>>> main
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
   },
-<<<<<<< HEAD
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "express": "^5.2.1"
-  }
-}
-=======
   "dependencies": {
     "express": "^5.1.0"
   }
 }
->>>>>>> main
