@@ -1,0 +1,12 @@
+{
+  "name": "enterprise-app",
+  "version": "1.0.0",
+  "description": "Enterprise CI/CD Demo Application",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
